@@ -1,21 +1,23 @@
 import requests
 
 API = "https://sis.jhu.edu/api/classes/"
-KEY = "####REPLACE WITH YOUR API KEY####"
+with open('Key.txt', 'r') as f: KEY = f.readline()
 KEYSTR = "?key="+KEY
-CURRENTTERM = ""
+CURRENTTERM = r"/Spring 2025" #USE /current IF YOU WANT THE CURRENT TERM
+CURRENTTERM = CURRENTTERM.replace(" ","%20")
 #The school names to search through
 SCHOOLNAMES = [r"Whiting School of Engineering",r"Krieger School of Arts and Sciences"]
 OUTPATH = r"CourseData.txt"
 
 def getAllCourses():
+    global CURRENTTERM
     print(f"Getting all courses from: {SCHOOLNAMES}")
     #Get all the data for each school in the current semester and put in one list
     courseRaws = []
     for school in SCHOOLNAMES:
         print(f"Getting Courses from: {school}")
         school = school.replace(" ","%20")
-        r = requests.get(API + school + r"/current" + KEYSTR)
+        r = requests.get(API + school + CURRENTTERM + KEYSTR)
         rj = r.json()
         courseRaws.extend(rj)
     #Now grab sections, it goes [[classcode,section],[classcode,section]]
@@ -27,8 +29,8 @@ def getAllCourses():
         sections.append(sectioncode)
 
     #Set the current term
-    global CURRENTTERM
-    CURRENTTERM = courseRaws[0]["Term"]
+    if len(CURRENTTERM) == 0: 
+        CURRENTTERM = courseRaws[0]["Term"]
     return courseRaws[:],sections[:] #Remove the 200 restriction when done
 
 def getSectionRaws(courseRaws,sections):
@@ -43,6 +45,7 @@ def getSectionRaws(courseRaws,sections):
 
         #Check for weird circumstances
         if len(rj) != 1:
+            continue #Just skip it no reason
             raise ValueError(f"ERROR: Data for {section} has length {len(rj)}")
         
         sectionRaws.append(rj[0])
