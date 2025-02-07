@@ -28,9 +28,6 @@ def getAllCourses():
         sectioncode = coursecode+section
         sections.append(sectioncode)
 
-    #Set the current term
-    if len(CURRENTTERM) == 0: 
-        CURRENTTERM = courseRaws[0]["Term"]
     return courseRaws[:],sections[:] #Remove the 200 restriction when done
 
 def getSectionRaws(courseRaws,sections):
@@ -40,7 +37,7 @@ def getSectionRaws(courseRaws,sections):
         name = courseRaws[i]["OfferingName"]
         section = sections[i]
         print(f"{i}) Getting {name} : {section}...")
-        r = requests.get(API + section + "/" + CURRENTTERM + KEYSTR)
+        r = requests.get(API + section + CURRENTTERM + KEYSTR)
         rj = r.json()
 
         #Check for weird circumstances
