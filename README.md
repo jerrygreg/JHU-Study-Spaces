@@ -1,4 +1,4 @@
-# How this works: 
+## How this works: 
 Run GetAllCourses, then run MapGenerator to create an HTML file to find when classrooms do not have classes in them. The MapGenerator.html has an example of what this will look like. 
 
 # FEATURES:
