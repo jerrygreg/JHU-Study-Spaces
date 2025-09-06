@@ -3,8 +3,7 @@ import requests
 API = "https://sis.jhu.edu/api/classes/"
 with open('Key.txt', 'r') as f: KEY = f.readline()
 KEYSTR = "?key="+KEY
-CURRENTTERM = r"/Spring 2025" #USE /current IF YOU WANT THE CURRENT TERM
-CURRENTTERM = CURRENTTERM.replace(" ","%20")
+CURRENTTERM = r"/Fall 2025".replace(" ","%20") #USE /current IF YOU WANT THE CURRENT TERM
 #The school names to search through
 SCHOOLNAMES = [r"Whiting School of Engineering",r"Krieger School of Arts and Sciences"]
 OUTPATH = r"CourseData.txt"
@@ -30,14 +29,15 @@ def getAllCourses():
 
     return courseRaws[:],sections[:] #Remove the 200 restriction when done
 
-def getSectionRaws(courseRaws,sections):
+def getSectionRaws(courseRaws,sections: list[str]):
     sectionRaws = []
     #For each course get the section data from the current term
     for i in range(len(courseRaws)):
-        name = courseRaws[i]["OfferingName"]
-        section = sections[i]
+        name: str = courseRaws[i]["OfferingName"]
+        section: str = sections[i]
         print(f"{i}) Getting {name} : {section}...")
-        r = requests.get(API + section + CURRENTTERM + KEYSTR)
+        full_url: str = API + section + CURRENTTERM + KEYSTR
+        r = requests.get(full_url)
         rj = r.json()
 
         #Check for weird circumstances
